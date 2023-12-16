@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "sep-server"
+version = "0.1.0"
+description = ""
+authors = ["hson <lehoangsonsg@gmail.com>"]
+readme = "README.md"
+packages = [{include = "sep_server"}]
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.11"
+SQLAlchemy = "^2.0.20"
+fastapi = "^0.101.1"
+uvicorn = {extras = ["standard"], version = "^0.23.2"}
+pyyaml = "^6.0.1"
+pyodbc = "^4.0.39"
+pandas = "^2.1.0"
+openpyxl = "^3.1.2"
+
+[tool.poetry.group.test.dependencies]
+pytest = "^7.4.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

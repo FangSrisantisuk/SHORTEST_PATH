@@ -1,0 +1,45 @@
+version: '3'
+services:
+  mssql_server:
+    build:
+      context: .
+      dockerfile: src/db/Dockerfile
+    restart: always
+    ports:
+      - "1433:1433"
+    environment:
+      ACCEPT_EULA: Y
+      MSSQL_SA_PASSWORD: Password@123456
+      SQL_DEFAULT_USER: db_app_dev
+      SQL_DEFAULT_PASSWORD: Password@123456
+      SQL_DEFAULT_DB: TestDB
+    healthcheck:
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P $$MSSQL_SA_PASSWORD -Q "SELECT 1"
+      start_period: 5s
+      start_interval: 5s
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - mssql_data:/var/opt/mssql
+
+  sep_server:
+    build:
+      context: .
+      dockerfile: src/server/Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      mssql_server:
+        condition: service_healthy
+        required: true
+    environment:
+      DB_USR: db_app_dev
+      DB_PASSWD: Password@123456
+      DB_ADDR: mssql_server
+      DB_PORT: 1433
+      DB_NAME: TestDB
+    tty: true
+
+volumes:
+  mssql_data:
